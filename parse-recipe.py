@@ -11,6 +11,13 @@ inputFile = 'result.html'
 # Setup
 # -----------------------------------------------------------------------------
 
+def merge_maps(x, y):
+    z = x.copy()
+    z.update(y)
+    return z
+
+output = {}
+
 # -----------------------------------------------------------------------------
 # Script
 # -----------------------------------------------------------------------------
@@ -30,26 +37,63 @@ title = soup.title
 # yield, active time, total time, categories
 items = soup.find_all('div', class_='item')
 
-metaData = {
+output = merge_maps(output, {
+    'title': title.string.strip(),
     'yield': items[0].span.string.strip(),
     'activeTime': items[1].span.string.strip(),
     'totalTime': items[2].span.string.strip(),
     'categories': items[3].span.string.strip()
-}
-
-for k, v in metaData.iteritems():
-    print k, v
+})
 
 # ingredients
-ingredients = soup.find('div', class_='ingcontainer')
+ingredients = []
+
+sections = soup.find_all('ul', class_='inggroupitems')
+
+for section in sections:
+    title = (section.previous_sibling.previous_sibling and section.previous_sibling.previous_sibling.string.strip() or '')
+    o_section = {
+        'title': title,
+        'items': []
+    }
+    items = section.find_all('span', class_='content')
+    for item in items:
+        quantity = (item.span.string or '').strip()
+        ingredient = (item.contents[2]).strip()
+        o_section['items'].append({
+            'quantity': quantity,
+            'ingredient': ingredient
+        })
+    ingredients.append(o_section)
+
+output = merge_maps(output, {
+    'ingredients': ingredients
+})
 
 # instructions
-instructions = soup.find('div', class_='dircontainer')
+instructions = []
+
+sections = soup.find_all('ol', class_='dirgroupitems')
+
+for section in sections:
+    title = (section.previous_sibling.previous_sibling and section.previous_sibling.previous_sibling.string.strip() or '')
+    o_section = {
+        'title': title,
+        'items': []
+    }
+    items = section.find_all('span', class_='text')
+    for item in items:
+        if item.string.strip() == 'Instructions':
+            continue
+        o_section['items'].append(item.string.strip())
+    instructions.append(o_section)
+
+output = merge_maps(output, {
+    'instructions': instructions
+})
+
+# final output
+for k, v in output.iteritems():
+    print k, v
 
 print '...done.'
-
-
-# h = html2text.HTML2Text()
-# h.ignore_links = True
-# result = h.handle(rawHTML)
-# cphMiddle_cphMain_lblTitle
