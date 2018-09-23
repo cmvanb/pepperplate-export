@@ -1,4 +1,7 @@
 import io
+import re
+import unicodedata
+import json
 from bs4 import BeautifulSoup
 
 # -----------------------------------------------------------------------------
@@ -6,10 +9,22 @@ from bs4 import BeautifulSoup
 # -----------------------------------------------------------------------------
 
 inputFile = 'result.html'
+outputDirectory = 'parsed-recipes'
 
 # -----------------------------------------------------------------------------
 # Setup
 # -----------------------------------------------------------------------------
+
+def slugify(value):
+    """
+    Convert to ASCII. Convert spaces to hyphens.
+    Remove characters that aren't alphanumerics, underscores, or hyphens.
+    Convert to lowercase. Also strip leading and trailing whitespace.
+    """
+    value = unicode(str(value))
+    value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore').decode('ascii')
+    value = re.sub(r'[^\w\s-]', '', value).strip().lower()
+    return re.sub(r'[-\s]+', '-', value)
 
 def merge_maps(x, y):
     z = x.copy()
@@ -31,18 +46,22 @@ with io.open(inputFile, 'r', encoding='utf-8') as f:
 # Parse recipe
 soup = BeautifulSoup(parseTarget, 'html.parser')
 
-# title
-title = soup.title
-
-# yield, active time, total time, categories
 items = soup.find_all('div', class_='item')
 
+title = soup.title.string.split('-', 1)[1].strip()
+filename = slugify(title) + u'.json'
+yield_ = items[0].span.string.strip()
+activeTime = items[1].span.string.strip()
+totalTime = items[2].span.string.strip()
+categories = map(lambda c:c.strip(), items[3].span.string.strip().split(','))
+
 output = merge_maps(output, {
-    'title': title.string.strip(),
-    'yield': items[0].span.string.strip(),
-    'activeTime': items[1].span.string.strip(),
-    'totalTime': items[2].span.string.strip(),
-    'categories': items[3].span.string.strip()
+    'title': title,
+    'filename': filename,
+    'yield': yield_,
+    'activeTime': activeTime,
+    'totalTime': totalTime,
+    'categories': categories
 })
 
 # ingredients
@@ -95,5 +114,13 @@ output = merge_maps(output, {
 # final output
 for k, v in output.iteritems():
     print k, v
+
+# Write result to file
+outputFileName = outputDirectory + '/' + output['filename']
+
+outputFileContent = unicode(json.dumps(output))
+
+with io.open(outputFileName, 'w', encoding='utf-8') as f:
+    f.write(outputFileContent)
 
 print '...done.'

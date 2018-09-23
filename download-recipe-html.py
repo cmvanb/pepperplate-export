@@ -18,7 +18,7 @@ password = config['DEFAULT']['password']
 urlLogin = 'https://www.pepperplate.com/login.aspx'
 urlRecipe = 'http://www.pepperplate.com/recipes/view.aspx?id=20460714'
 
-outputFileName = 'result.html'
+outputFile = 'result.html'
 
 # -----------------------------------------------------------------------------
 # Setup
@@ -66,7 +66,7 @@ br.submit()
 result = br.open(urlRecipe).read().decode('utf-8')
 
 # Write result to file
-with io.open(outputFileName, 'w', encoding='utf-8') as f:
+with io.open(outputFile, 'w', encoding='utf-8') as f:
     f.write(result)
 
 print '...done.'
