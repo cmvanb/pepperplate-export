@@ -5,6 +5,8 @@ def download_from_json(recipes_json):
 
     print 'Downloading from ' + recipes_json + ' ...'
 
+    # TODO: Download to directory.
+
     with open(recipes_json, 'r') as f:
         recipes = json.load(f)
 
@@ -13,7 +15,6 @@ def download_from_json(recipes_json):
             time.sleep(1)
             download_recipe_html.download_recipe_html(url)
             # img = r['img']
-
 
     print '...done.'
 
