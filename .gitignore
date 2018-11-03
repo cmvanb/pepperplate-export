@@ -1,3 +1,4 @@
+.vscode
 credentials.ini
 result.html
 parsed-recipes/*.json
