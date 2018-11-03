@@ -1,7 +1,7 @@
 # -----------------------------------------------------------------------------
 # Download recipe HTML
 # -----------------------------------------------------------------------------
-def download_recipe_html(recipe_id):
+def download_recipe_html(recipeId):
     import configparser
     import cookielib
     import io
@@ -16,9 +16,9 @@ def download_recipe_html(recipe_id):
     password = config['DEFAULT']['password']
 
     urlLogin = 'https://www.pepperplate.com/login.aspx'
-    urlRecipe = 'http://www.pepperplate.com/recipes/view.aspx?id=' + str(recipe_id)
+    urlRecipe = 'http://www.pepperplate.com/recipes/view.aspx?id=' + str(recipeId)
 
-    outputFile = str(recipe_id) + '.html'
+    outputFile = str(recipeId) + '.html'
 
     # ---- Mechanize Setup ----------------------------------------------------
 
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     import sys
 
     if not sys.argv[1]:
-        print 'ERROR: Missing command line argument: recipe_id'
+        print 'ERROR: Missing command line argument: recipeId'
         sys.exit(1)
 
     download_recipe_html(sys.argv[1])
