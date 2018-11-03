@@ -1,9 +1,15 @@
 # Pepperplate export scripts
 
-Built with Python 2.7.
+Scripts to scrape your recipe data from Pepperplate.  
 
-`python download-recipe-html.py`
-`python parse-recipe.py`
+## Notes
 
-NOTE: If you are on code page 65001, switch to 437.
-`chcp 437`
+- Built with Python 2.7.
+- If you are on code page 65001, switch to 437: `chcp 437`
+
+## Usage
+
+```
+python download-recipe-html.py {RECIPE_ID}
+python parse-recipe.py {RECIPE_HTML}
+```
