@@ -1,4 +1,12 @@
+# python
+*.pyc
+
+# vs code
 .vscode
+
+# input files
 credentials.ini
+
+# output files
 result.html
 parsed-recipes/*.json
